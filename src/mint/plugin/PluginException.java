@@ -10,6 +10,10 @@ public abstract class PluginException extends Exception {
 
 	private final Plugin plugin;
 
+	protected PluginException() {
+		this(null);
+	}
+
 	protected PluginException(@Nullable Plugin plugin) {
 		super();
 

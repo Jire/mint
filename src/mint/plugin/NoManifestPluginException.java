@@ -1,5 +1,6 @@
 package mint.plugin;
 
+import mint.InferFuture;
 import mint.Nullable;
 import mint.Serial;
 
@@ -12,6 +13,11 @@ public final class NoManifestPluginException extends PluginException {
 		this(plugin, "Could not find plugin manifest");
 	}
 
+	public NoManifestPluginException() {
+		this(null);
+	}
+
+	@InferFuture
 	protected NoManifestPluginException(Plugin plugin, String message) {
 		super(plugin, message);
 	}

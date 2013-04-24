@@ -41,15 +41,18 @@ public final class UniversalPluginLoader extends AbstractPluginLoader {
 									.replace("/", "."));
 					if (potentialClass
 							.isAnnotationPresent(PluginManifest.class)) {
+						if (pluginClass != null) {
+							throw new MultipleManifestPluginException();
+						}
+
 						pluginClass = potentialClass;
-						break;
 					}
 				}
 			}
 			zf.close();
 
 			if (pluginClass == null) {
-				throw new NoManifestPluginException(null);
+				throw new NoManifestPluginException();
 			}
 
 			return pluginClass.newInstance();
