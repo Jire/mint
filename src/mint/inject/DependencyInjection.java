@@ -58,7 +58,6 @@ public final class DependencyInjection extends NotConstructable {
 				@Override
 				protected void configure() {
 					bind(clazz).to(null).in(Scope.SINGLETON);
-					System.out.println("Configured: " + clazz.getName());
 				}
 			});
 		}

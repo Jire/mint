@@ -1,14 +1,15 @@
 package mint.reflect;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.net.URLDecoder;
+import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
+import java.util.jar.JarInputStream;
 
 import mint.Experimental;
 import mint.NotConstructable;
@@ -29,10 +30,62 @@ public final class Classes extends NotConstructable {
 	 * @return A list of all the classes of the build path.
 	 */
 	public static List<Class<?>> list() {
-		return listInside("");
+		List<Class<?>> all = listFS();
+		all.addAll(listAllWithinPackage());
+		return all;
 	}
 
-	private static List<Class<?>> listInside(String packageName) {
+	private static List<Class<?>> listAllWithinPackage() {
+		return listWithinPackage("");
+	}
+
+	private static List<Class<?>> listWithinPackage(String packageName) {
+		List<Class<?>> classes = new ArrayList<Class<?>>();
+
+		CodeSource src = Classes.class.getProtectionDomain().getCodeSource();
+		if (src != null) {
+			String jarName = src.getLocation().getFile();
+			packageName = packageName.replaceAll("\\.", "/");
+
+			File jar = new File(jarName);
+			if (jar.exists()) {
+				try {
+					JarInputStream jarFile = new JarInputStream(
+							new FileInputStream(jarName));
+
+					JarEntry jarEntry;
+					while ((jarEntry = jarFile.getNextJarEntry()) != null) {
+						if ((jarEntry.getName().startsWith(packageName))
+								&& (jarEntry.getName().endsWith(".class"))) {
+							classes.add(Class.forName(jarEntry
+									.getName()
+									.replaceAll("/", "\\.")
+									.substring(0,
+											jarEntry.getName().length() - 6)));
+						}
+					}
+
+					jarFile.close();
+				} catch (IOException e) {
+				} catch (ClassNotFoundException e) {
+				}
+			}
+		}
+
+		return classes;
+	}
+
+	private static List<Class<?>> listFS() {
+		List<Class<?>> list = new ArrayList<Class<?>>();
+		CodeSource src = Classes.class.getProtectionDomain().getCodeSource();
+		if (src != null
+				&& !src.getLocation().getFile().toLowerCase().endsWith(".jar")) {
+			list.addAll(listFSInside(""));
+		}
+		return list;
+	}
+
+	private static List<Class<?>> listFSInside(String packageName) {
 		List<Class<?>> classes = new ArrayList<Class<?>>();
 		String path = packageName.replace('.', '/');
 		Enumeration<URL> roots;
@@ -64,66 +117,12 @@ public final class Classes extends NotConstructable {
 									file.getName().length() - 6)));
 				} catch (ClassNotFoundException e) {
 					continue;
+				} catch (NoClassDefFoundError e) {
+					continue;
 				}
 			}
 		}
 		return classes;
-	}
-
-	public static List<Class<?>> all() {
-		List<Class<?>> classes = new ArrayList<Class<?>>();
-		List<String> classNames = new ArrayList<String>();
-		try {
-			classNames.addAll(getClassNamesFromPackage(""));
-		} catch (IOException e) {
-		}
-		for (String className : classNames) {
-			try {
-				classes.add(Class.forName(className));
-			} catch (ClassNotFoundException e) {
-			}
-		}
-		return classes;
-	}
-
-	public static List<String> getClassNamesFromPackage(String packageName)
-			throws IOException {
-		ClassLoader classLoader = Thread.currentThread()
-				.getContextClassLoader();
-		List<String> names = new ArrayList<String>();
-		packageName = packageName.replace(".", "/");
-		URL packageURL = classLoader.getResource(packageName);
-		if (packageURL.getProtocol().equals("jar")) {
-			String jarFileName;
-			JarFile jf;
-			Enumeration<JarEntry> jarEntries;
-			String entryName;
-			jarFileName = URLDecoder.decode(packageURL.getFile(), "UTF-8");
-			jarFileName = jarFileName.substring(5, jarFileName.indexOf("!"));
-			jf = new JarFile(jarFileName);
-			jarEntries = jf.entries();
-			while (jarEntries.hasMoreElements()) {
-				entryName = jarEntries.nextElement().getName();
-				if (entryName.startsWith(packageName)
-						&& entryName.length() > packageName.length() + 5) {
-					entryName = entryName.substring(packageName.length(),
-							entryName.lastIndexOf('.'));
-					names.add(entryName);
-				}
-			}
-		} else {
-			File folder = new File(packageURL.getFile());
-			File[] contenuti = folder.listFiles();
-			String entryName;
-			for (File actual : contenuti) {
-				entryName = actual.getName();
-				int lastIndex = entryName.lastIndexOf('.');
-				if (lastIndex != -1)
-					entryName = entryName.substring(0, lastIndex);
-				names.add(entryName);
-			}
-		}
-		return names;
 	}
 
 	/**

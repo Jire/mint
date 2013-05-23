@@ -50,7 +50,7 @@ final class UniversalBinder implements Binder {
 	@Override
 	public boolean doesImplementationExist(Class<?> definition) {
 		ImplementationBinding<?> binding = implementationMap.get(definition);
-		return implementationMap != null && binding.getImplementation() != null;
+		return binding != null && binding.getImplementation() != null;
 	}
 
 	@Override

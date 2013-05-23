@@ -83,7 +83,9 @@ final class UniversalInjector implements Injector {
 			return instance;
 		}
 
-		throw new NullPointerException();
+		throw new NullPointerException(
+				"Failed to find a matching implementation for type: "
+						+ definition.getName());
 	}
 
 }
