@@ -76,13 +76,7 @@ public final class Classes extends NotConstructable {
 	}
 
 	private static List<Class<?>> listFS() {
-		List<Class<?>> list = new ArrayList<Class<?>>();
-		CodeSource src = Classes.class.getProtectionDomain().getCodeSource();
-		if (src != null
-				&& !src.getLocation().getFile().toLowerCase().endsWith(".jar")) {
-			list.addAll(listFSInside(""));
-		}
-		return list;
+		return listFSInside("");
 	}
 
 	private static List<Class<?>> listFSInside(String packageName) {
@@ -97,7 +91,8 @@ public final class Classes extends NotConstructable {
 		}
 		while (roots.hasMoreElements()) {
 			File root = new File(roots.nextElement().getPath());
-			classes.addAll(listInside(root, packageName));
+			if (root != null && root.exists())
+				classes.addAll(listInside(root, packageName));
 		}
 		return classes;
 	}
