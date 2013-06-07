@@ -21,7 +21,7 @@ public interface Console {
 	 * @param text
 	 *            The text to be printed.
 	 */
-	public void print(String text);
+	void print(String text);
 
 	/**
 	 * Prints some text and then terminate the line.
@@ -29,7 +29,7 @@ public interface Console {
 	 * @param text
 	 *            The text to be printed.
 	 */
-	public void println(String text);
+	void println(String text);
 
 	/**
 	 * Terminates the current line by writing the line separator string. The
@@ -37,7 +37,7 @@ public interface Console {
 	 * <code>line.separator</code>, and is not necessarily a single newline
 	 * character (<code>'\n'</code>).
 	 */
-	public void println();
+	void println();
 
 	/**
 	 * A convenience method to write a formatted string to this output stream
@@ -71,7 +71,7 @@ public interface Console {
 	 * @throws NullPointerException
 	 *             If the <tt>format</tt> is <tt>null</tt>
 	 */
-	public void printf(String format, Object... args);
+	void printf(String format, Object... args);
 
 	/**
 	 * Reads a single line of text from the console.
@@ -83,7 +83,7 @@ public interface Console {
 	 *         any line-termination characters, or <tt>null</tt> if an end of
 	 *         stream has been reached.
 	 */
-	public String readLine();
+	String readLine();
 
 	/**
 	 * Provides a prompt and then reads a single line of text from the console.
@@ -95,7 +95,7 @@ public interface Console {
 	 *         any line-termination characters, or <tt>null</tt> if an end of
 	 *         stream has been reached.
 	 */
-	public String readLine(String prompt);
+	String readLine(String prompt);
 
 	/**
 	 * Reads a password or passphrase from the console with (if possible)
@@ -108,7 +108,7 @@ public interface Console {
 	 *         the console, not including any line-termination characters, or
 	 *         <tt>null</tt> if an end of stream has been reached.
 	 */
-	public String readPassword();
+	String readPassword();
 
 	/**
 	 * Provides a prompt and then reads a password or passphrase from the
@@ -121,6 +121,6 @@ public interface Console {
 	 *         the console, not including any line-termination characters, or
 	 *         <tt>null</tt> if an end of stream has been reached.
 	 */
-	public String readPassword(String prompt);
+	String readPassword(String prompt);
 
 }

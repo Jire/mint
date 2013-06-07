@@ -18,7 +18,7 @@ public interface Cancellable {
 	 * @return Whether or not the task partitioned to execute should be
 	 *         cancelled.
 	 */
-	public boolean isCancelled();
+	boolean isCancelled();
 
 	/**
 	 * Sets the cancellation state of the task.
@@ -33,6 +33,6 @@ public interface Cancellable {
 	 *            Whether or not the task partitions to execute should be
 	 *            cancelled.
 	 */
-	public void setCancelled(boolean cancelled);
+	void setCancelled(boolean cancelled);
 
 }

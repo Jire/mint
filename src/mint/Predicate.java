@@ -23,6 +23,6 @@ public interface Predicate<T> {
 	 *            The input that the predicate should act on.
 	 * @return Whether or not the input value meets the filtering criterion.
 	 */
-	public boolean evaluate(@Nullable T input);
+	boolean evaluate(@Nullable T input);
 
 }
